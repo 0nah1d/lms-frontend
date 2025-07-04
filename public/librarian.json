@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "name": "Rafiq Hasan",
+        "position": "Chief Librarian",
+        "email": "rafiq.hasan@digitallibrary.edu.bd",
+        "phone": "+8801712345678",
+        "image": "https://i.ibb.co/Gf6RNgvH/librarian-profile.png"
+    },
+    {
+        "id": 2,
+        "name": "Sadia Karim",
+        "position": "Assistant Librarian",
+        "email": "sadia.karim@digitallibrary.edu.bd",
+        "phone": "+8801711122233",
+        "image": "https://i.ibb.co/Gf6RNgvH/librarian-profile.png"
+    },
+    {
+        "id": 3,
+        "name": "Tanvir Alam",
+        "position": "Digital Resource Manager",
+        "email": "tanvir.alam@digitallibrary.edu.bd",
+        "phone": "+8801723456789",
+        "image": "https://i.ibb.co/Gf6RNgvH/librarian-profile.png"
+    },
+    {
+        "id": 4,
+        "name": "Nusrat Jahan",
+        "position": "Senior Cataloguer",
+        "email": "nusrat.jahan@digitallibrary.edu.bd",
+        "phone": "+8801911223344",
+        "image": "https://i.ibb.co/Gf6RNgvH/librarian-profile.png"
+    }
+]

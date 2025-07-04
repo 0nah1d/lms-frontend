@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "category": "Computer Science and Engineering",
+        "image": "https://i.ibb.co/S4sxZw3B/cse.png"
+    },
+    {
+        "id": 2,
+        "category": "BBA",
+        "image": "https://i.ibb.co/bwSGX7J/bba.png"
+    },
+    {
+        "id": 3,
+        "category": "Civil Engineering",
+        "image": "https://i.ibb.co/pBHmY18h/civil.png"
+    },
+    {
+        "id": 4,
+        "category": "Electrical and Electronics Engineering",
+        "image": "https://i.ibb.co/YTw3KjGS/eee.png"
+    },
+    {
+        "id": 5,
+        "category": "English",
+        "image": "https://i.ibb.co/VYX38rwL/english.png"
+    },
+    {
+        "id": 6,
+        "category": "Islamic Studies",
+        "image": "https://i.ibb.co/sdVm3K25/islamic.png"
+    },
+    {
+        "id": 7,
+        "category": "Bachelor of Laws",
+        "image": "https://i.ibb.co/HTqJ4MSw/Law.png"
+    }
+]
