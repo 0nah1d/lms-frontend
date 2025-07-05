@@ -4,6 +4,7 @@ import {api} from '../../../utils/api.js'
 import {getDepartmentList} from '../../../utils/queary.js'
 import BookFormModal from './elements/bookFormModal.jsx'
 import DeleteConfirmDialog from '../../../components/UI/deleteConfirmDialog.jsx'
+import {useNavigate} from "react-router-dom";
 
 export default function AdminBooks() {
     const [books, setBooks] = useState([])
@@ -16,6 +17,8 @@ export default function AdminBooks() {
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
 
+    const navigate = useNavigate()
+
     const fetchBooks = async (currentPage = 1) => {
         try {
             const res = await api.get(`/book?page=${currentPage}`)
@@ -26,10 +29,13 @@ export default function AdminBooks() {
         }
     }
 
-    console.log(books)
-
     useEffect(() => {
-        getDepartmentList().then(setDepartments)
+        getDepartmentList().then(setDepartments).finally(() => {
+            if (departments.length === 0) {
+                toast.warning('No departments found. Please create department at least one. Then can visite books page.')
+                navigate('/dashboard/department')
+            }
+        })
     }, [])
 
     useEffect(() => {
