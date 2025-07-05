@@ -4,7 +4,7 @@ import {toast} from 'react-toastify'
 import {api} from "../../../utils/api.js";
 import {getDepartmentList} from "../../../utils/queary.js";
 import BookFormModal from "./elements/bookFormModal.jsx";
-import ConfirmDialog from "./elements/confirmDialog.jsx";
+import ConfirmDialog from "../../../components/UI/confirmDialog.jsx";
 
 export default function AdminBooks() {
     const [books, setBooks] = useState([])
