@@ -16,8 +16,6 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
     })
 
     useEffect(() => {
-
-        console.log(initialData)
         if (initialData) {
             reset({
                 ...initialData,
