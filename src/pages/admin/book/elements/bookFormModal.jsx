@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {bookSchema} from "../../../../schema/book.js";
+import {getBookSchema} from "../../../../schema/book.js";
 import {imageToBase64, objectToArray} from "../../../../utils/index.js";
 
 export default function BookFormModal({isOpen, onClose, initialData, onSubmitBook, departmentList}) {
@@ -12,7 +12,7 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
         setError,
         formState: {errors},
     } = useForm({
-        resolver: zodResolver(bookSchema),
+        resolver: zodResolver(getBookSchema(!!initialData)),
     })
 
     useEffect(() => {
@@ -23,7 +23,16 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
                 department: initialData.department._id,
             })
         } else {
-            reset()
+            reset({
+                title: '',
+                author: '',
+                genre: '',
+                image: '',
+                description: '',
+                book_link: '',
+                department: '',
+                stock: 0
+            })
         }
     }, [initialData, reset])
 
@@ -32,6 +41,7 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
             let base64Image = initialData?.image || ''
             if (data.image && data.image[0]?.type) {
                 base64Image = await imageToBase64(data.image[0])
+
             }
 
             const payload = {
@@ -40,7 +50,16 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
             }
 
             await onSubmitBook(payload)
-            reset()
+            reset({
+                title: '',
+                author: '',
+                genre: '',
+                image: '',
+                description: '',
+                book_link: '',
+                department: '',
+                stock: 0
+            })
             onClose()
         } catch (error) {
             const formattedData = objectToArray(error?.response?.data || {})
@@ -95,21 +114,33 @@ export default function BookFormModal({isOpen, onClose, initialData, onSubmitBoo
                         </div>
                     </div>
 
-                    {/* Department */}
-                    <div className="mb-4">
-                        <label className="block mb-1 font-medium">Department*</label>
-                        <select
-                            {...register('department')}
-                            className="w-full border rounded px-3 py-2"
-                        >
-                            <option value="">Select Department</option>
-                            {departmentList.map((dept) => (
-                                <option key={dept._id} value={dept._id}>
-                                    {dept.name}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.department && <p className="text-red-500 text-sm">{errors.department.message}</p>}
+                    <div className="flex gap-4 mb-4">
+                        <div className="flex-1">
+                            <label className="block mb-1 font-medium">Department*</label>
+                            <select
+                                {...register('department')}
+                                className="w-full border rounded px-3 py-2"
+                            >
+                                <option value="">Select Department</option>
+                                {departmentList.map((dept) => (
+                                    <option key={dept._id} value={dept._id}>
+                                        {dept.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.department && <p className="text-red-500 text-sm">{errors.department.message}</p>}
+                        </div>
+
+                        <div className="flex-1">
+                            <label className="block mb-1 font-medium">Stock*</label>
+                            <input
+                                type="number"
+                                {...register('stock')}
+                                className="w-full border rounded px-3 py-2"
+                            />
+                            {errors.stock && <p className="text-red-500 text-sm">{errors.stock.message}</p>}
+                        </div>
+
                     </div>
 
                     {/* Book Link */}

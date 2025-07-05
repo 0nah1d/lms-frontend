@@ -36,8 +36,8 @@ export default function AdminBooks() {
 
     const handleDelete = async () => {
         try {
-            await api.delete(`/book/${bookToDelete._id}`)
-            toast.success('Book deleted successfully')
+            const res = await api.delete(`/book/${bookToDelete._id}`)
+            toast.success(res.data.message)
             await fetchBooks()
         } catch {
             toast.error('Failed to delete')
@@ -48,11 +48,11 @@ export default function AdminBooks() {
 
     const handleSubmitBook = async (payload) => {
         if (selectedBook) {
-            await api.patch(`/book/${selectedBook._id}`, payload)
-            toast.success('Book updated')
+            const res = await api.patch(`/book/${selectedBook._id}`, payload)
+            toast.success(res.data.message)
         } else {
-            await api.post('/book', payload)
-            toast.success('Book added')
+            const res = await api.post('/book', payload)
+            toast.success(res.data.message)
         }
         await fetchBooks()
     }
@@ -73,17 +73,26 @@ export default function AdminBooks() {
                     <th className="border px-4 py-2">Author</th>
                     <th className="border px-4 py-2">Genre</th>
                     <th className="border px-4 py-2">Department</th>
+                    <th className="border px-4 py-2">Stock</th>
                     <th className="border px-4 py-2">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {books?.results?.map((book, index) => (
                     <tr key={index}>
-                        <td className="border px-4 py-2">{book.title}</td>
+                        <td className="border px-4 py-2">
+                            <div className={'flex items-center gap-4'}>
+                                <img height={60} width={60} src={book.image} alt={'book'}/>
+                                {book.title}
+                            </div>
+                        </td>
                         <td className="border px-4 py-2">{book.author}</td>
                         <td className="border px-4 py-2">{book.genre}</td>
                         <td className="border px-4 py-2">
                             {book.department.name}
+                        </td>
+                        <td className="border px-4 py-2">
+                            {book.stock}
                         </td>
                         <td className="border px-4 py-2 space-x-2">
                             <button
