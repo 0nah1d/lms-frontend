@@ -111,7 +111,7 @@ export default function AdminBooks() {
                                 <img
                                     height={60}
                                     width={60}
-                                    src={book.image}
+                                    src={book.image_url}
                                     alt={'book'}
                                 />
                                 {book.title}

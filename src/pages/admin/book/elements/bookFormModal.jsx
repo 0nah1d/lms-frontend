@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getBookSchema } from '../../../../schema/book.js'
-import { imageToBase64, objectToArray } from '../../../../utils/index.js'
+import { bookSchema } from '../../../../schema/book.js'
+import { objectToArray } from '../../../../utils/index.js'
 
 export default function BookFormModal({
     isOpen,
@@ -18,14 +18,13 @@ export default function BookFormModal({
         setError,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(getBookSchema(!!initialData)),
+        resolver: zodResolver(bookSchema),
     })
 
     useEffect(() => {
         if (initialData) {
             reset({
                 ...initialData,
-                image: '',
                 department: initialData.department._id,
             })
         } else {
@@ -33,7 +32,7 @@ export default function BookFormModal({
                 title: '',
                 author: '',
                 genre: '',
-                image: '',
+                image_url: '',
                 description: '',
                 book_link: '',
                 department: '',
@@ -44,17 +43,7 @@ export default function BookFormModal({
 
     const handleFormSubmit = async (data) => {
         try {
-            let base64Image = initialData?.image || ''
-            if (data.image && data.image[0]?.type) {
-                base64Image = await imageToBase64(data.image[0])
-            }
-
-            const payload = {
-                ...data,
-                image: base64Image,
-            }
-
-            await onSubmitBook(payload)
+            await onSubmitBook(data)
             reset({
                 title: '',
                 author: '',
@@ -199,28 +188,19 @@ export default function BookFormModal({
                         )}
                     </div>
 
-                    {/* Upload Image */}
                     <div className="mb-4">
                         <label className="block mb-1 font-medium">
-                            Upload Image*
+                            Image URL*
                         </label>
                         <input
-                            type="file"
-                            accept="image/*"
-                            {...register('image')}
+                            type="url"
+                            {...register('image_url')}
                             className="w-full border rounded px-3 py-2"
                         />
-                        {errors.image && (
+                        {errors.image_url && (
                             <p className="text-red-500 text-sm">
-                                {errors.image.message}
+                                {errors.image_url.message}
                             </p>
-                        )}
-                        {initialData?.image && (
-                            <img
-                                src={initialData.image}
-                                alt="Current"
-                                className="mt-2 h-24 object-contain border rounded"
-                            />
                         )}
                     </div>
 

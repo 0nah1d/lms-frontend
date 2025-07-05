@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import {z} from 'zod'
 
-export const getBookSchema = (isEdit = false) =>
+export const bookSchema =
     z.object({
         title: z
             .string()
@@ -29,12 +29,8 @@ export const getBookSchema = (isEdit = false) =>
                 required_error: 'Stock is required',
             })
             .min(0, 'Stock must be 0 or greater'),
-        image: isEdit
-            ? z.any().optional()
-            : z
-                  .any()
-                  .refine(
-                      (file) => file instanceof FileList && file.length === 1,
-                      'Image is required'
-                  ),
+        image_url: z
+            .string()
+            .min(1, 'Book link is required')
+            .url('Book link must be a valid URL'),
     })
