@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {toast} from 'react-toastify'
 import {api} from '../../../utils/api.js'
-import {getDepartmentList} from '../../../utils/queary.js'
 import BookFormModal from './elements/bookFormModal.jsx'
 import DeleteConfirmDialog from '../../../components/UI/deleteConfirmDialog.jsx'
 import {useNavigate} from "react-router-dom";
@@ -19,6 +18,12 @@ export default function AdminBooks() {
 
     const navigate = useNavigate()
 
+    const fetchDept = async () => {
+        const res = await api.get('/department')
+        setDepartments(res.data || [])
+        return res
+    }
+
     const fetchBooks = async (currentPage = 1) => {
         try {
             const res = await api.get(`/book?page=${currentPage}`)
@@ -30,8 +35,8 @@ export default function AdminBooks() {
     }
 
     useEffect(() => {
-        getDepartmentList().then(setDepartments).finally(() => {
-            if (departments.length === 0) {
+        void fetchDept().then((res) => {
+            if (res?.data.length === 0) {
                 toast.warning('No departments found. Please create department at least one. Then can visite books page.')
                 navigate('/dashboard/department')
             }
@@ -115,7 +120,7 @@ export default function AdminBooks() {
                         <td className="border px-4 py-2">{book.author}</td>
                         <td className="border px-4 py-2">{book.genre}</td>
                         <td className="border px-4 py-2">
-                            {book.department.name}
+                            {book?.department?.name}
                         </td>
                         <td className="border px-4 py-2">{book.stock}</td>
                         <td className="border px-4 py-2">
