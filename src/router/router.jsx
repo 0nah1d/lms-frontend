@@ -18,8 +18,8 @@ import DashboardLayout from '../layout/dashboardLayout.jsx'
 import Dashboard from '../pages/admin/dashboard.jsx'
 import AllUser from '../pages/admin/allUser.jsx'
 import Librarian from '../pages/common/librarian/librarian.jsx'
-import AddBooks from '../pages/admin/addBooks.jsx'
 import Registration from '../pages/auth/registration.jsx'
+import AdminBooks from "../pages/admin/book/adminBooks.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -98,21 +98,21 @@ export const router = createBrowserRouter([
         path: '/dashboard',
         element: (
             <PrivateRouter>
-                <DashboardLayout></DashboardLayout>
+                <DashboardLayout/>
             </PrivateRouter>
         ),
         children: [
             {
                 path: '/dashboard',
-                element: <Dashboard></Dashboard>,
+                element: <Dashboard/>,
             },
             {
                 path: '/dashboard/all-users',
-                element: <AllUser></AllUser>,
+                element: <AllUser/>,
             },
             {
-                path: '/dashboard/add-books',
-                element: <AddBooks></AddBooks>,
+                path: '/dashboard/books',
+                element: <AdminBooks/>,
             },
         ],
     },

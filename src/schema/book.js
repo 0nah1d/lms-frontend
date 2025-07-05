@@ -22,6 +22,5 @@ export const bookSchema = z.object({
         .string()
         .min(1, 'Book link is required')
         .url('Book link must be a valid URL'),
-    category: z.string().min(1, 'Category is required'),
     department: z.string().min(1, 'Department is required'),
 })

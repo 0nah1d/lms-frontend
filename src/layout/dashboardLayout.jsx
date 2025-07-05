@@ -18,7 +18,7 @@ export default function DashboardLayout() {
                     </li>
                     <li className="flex items-center gap-2">
                         <FaAddressBook/>
-                        <NavLink to={'/dashboard/add-books'}>Add Book</NavLink>
+                        <NavLink to={'/dashboard/books'}>Add Book</NavLink>
                     </li>
                     <li className="flex items-center gap-2">
                         <FaBook></FaBook>
