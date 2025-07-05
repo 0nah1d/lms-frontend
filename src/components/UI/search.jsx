@@ -1,4 +1,4 @@
-export default function UseSearch({ search, setSearch }) {
+export default function Search({ search, setSearch }) {
     return (
         <div className="flex justify-center items-center my-10">
             <label className="input flex items-center gap-2">

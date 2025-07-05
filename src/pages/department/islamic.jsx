@@ -1,13 +1,13 @@
 import React from 'react'
-import UseCategoryPageTitle from '../../components/UI/useCategoryPageTitle.jsx'
+import CategoryPageTitle from '../../components/UI/categoryPageTitle.jsx'
 
 export default function Islamic() {
     return (
         <div>
-            <UseCategoryPageTitle
+            <CategoryPageTitle
                 title="Islamic Studies (IS)"
                 subtitle="Learn from texts on Quran, Hadith, Islamic philosophy, and contemporary Islamic thought."
-            ></UseCategoryPageTitle>
+            ></CategoryPageTitle>
         </div>
     )
 }

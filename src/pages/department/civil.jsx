@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
-import UseCategoryPageTitle from '../../components/UI/useCategoryPageTitle.jsx'
+import CategoryPageTitle from '../../components/UI/categoryPageTitle.jsx'
 import BooksCard from '../../components/UI/booksCard.jsx'
-import UseSearch from '../../components/UI/useSearch.jsx'
+import Search from '../../components/UI/search.jsx'
 
 export default function Civil() {
     const [search, setSearch] = useState('')
 
     return (
         <div>
-            <UseCategoryPageTitle
+            <CategoryPageTitle
                 title="Civil Engineering"
                 subtitle=" Explore resources on structural design, construction materials, and sustainable infrastructure."
-            ></UseCategoryPageTitle>
+            ></CategoryPageTitle>
 
             {/* search  */}
-            <UseSearch search={search} setSearch={setSearch}></UseSearch>
+            <Search search={search} setSearch={setSearch}></Search>
 
             <div className="w-11/12 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
                 <span className="loading loading-bars loading-xl text-center"></span>
