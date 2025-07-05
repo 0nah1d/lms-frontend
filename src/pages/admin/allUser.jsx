@@ -2,7 +2,6 @@ import React from 'react'
 import { FaUsers } from 'react-icons/fa'
 
 export default function AllUser() {
-
     return (
         <div className="mt-10">
             <div className="flex gap-40 items-center">

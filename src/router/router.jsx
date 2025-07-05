@@ -1,4 +1,4 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import MainLayout from '../layout/mainLayout.jsx'
 import Home from '../pages/common/home/home.jsx'
 import About from '../pages/common/about.jsx'
@@ -19,7 +19,8 @@ import Dashboard from '../pages/admin/dashboard.jsx'
 import AllUser from '../pages/admin/allUser.jsx'
 import Librarian from '../pages/common/librarian/librarian.jsx'
 import Registration from '../pages/auth/registration.jsx'
-import AdminBooks from "../pages/admin/book/adminBooks.jsx";
+import AdminBooks from '../pages/admin/book/adminBooks.jsx'
+import AdminDepartment from '../pages/admin/department/adminDepartment.jsx'
 
 export const router = createBrowserRouter([
     {
@@ -28,43 +29,43 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: '/login',
-                element: <Login/>,
+                element: <Login />,
             },
             {
                 path: '/register',
-                element: <Registration/>,
+                element: <Registration />,
             },
             {
                 path: '/',
-                element: <Home/>,
+                element: <Home />,
             },
             {
                 path: '/cse',
-                element: <Cse/>,
+                element: <Cse />,
             },
             {
                 path: '/bba',
-                element: <Bba/>,
+                element: <Bba />,
             },
             {
                 path: '/civil',
-                element: <Civil/>,
+                element: <Civil />,
             },
             {
                 path: '/eee',
-                element: <Eee/>,
+                element: <Eee />,
             },
             {
                 path: '/english',
-                element: <English/>,
+                element: <English />,
             },
             {
                 path: '/islamic',
-                element: <Islamic/>,
+                element: <Islamic />,
             },
             {
                 path: '/law',
-                element: <Law/>,
+                element: <Law />,
             },
             {
                 path: '/book/:id',
@@ -73,24 +74,24 @@ export const router = createBrowserRouter([
                         <BookDetails></BookDetails>
                     </PrivateRouter>
                 ),
-                loader: ({params}) =>
+                loader: ({ params }) =>
                     fetch(`http://localhost:5000/books/${params.id}`),
             },
             {
                 path: '/about',
-                element: <About/>,
+                element: <About />,
             },
             {
                 path: '/information',
-                element: <Information/>,
+                element: <Information />,
             },
             {
                 path: '/contact',
-                element: <Contact/>,
+                element: <Contact />,
             },
             {
                 path: '/librarian',
-                element: <Librarian/>,
+                element: <Librarian />,
             },
         ],
     },
@@ -98,21 +99,25 @@ export const router = createBrowserRouter([
         path: '/dashboard',
         element: (
             <PrivateRouter>
-                <DashboardLayout/>
+                <DashboardLayout />
             </PrivateRouter>
         ),
         children: [
             {
                 path: '/dashboard',
-                element: <Dashboard/>,
+                element: <Dashboard />,
             },
             {
                 path: '/dashboard/all-users',
-                element: <AllUser/>,
+                element: <AllUser />,
             },
             {
                 path: '/dashboard/books',
-                element: <AdminBooks/>,
+                element: <AdminBooks />,
+            },
+            {
+                path: '/dashboard/department',
+                element: <AdminDepartment />,
             },
         ],
     },

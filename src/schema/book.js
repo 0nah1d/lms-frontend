@@ -1,4 +1,4 @@
-import {z} from 'zod'
+import { z } from 'zod'
 
 export const getBookSchema = (isEdit = false) =>
     z.object({
@@ -23,8 +23,8 @@ export const getBookSchema = (isEdit = false) =>
             .min(1, 'Book link is required')
             .url('Book link must be a valid URL'),
         department: z.string().min(1, 'Department is required'),
-        stock: z
-            .coerce.number({
+        stock: z.coerce
+            .number({
                 invalid_type_error: 'Stock must be a number',
                 required_error: 'Stock is required',
             })
@@ -32,9 +32,9 @@ export const getBookSchema = (isEdit = false) =>
         image: isEdit
             ? z.any().optional()
             : z
-                .any()
-                .refine(
-                    (file) => file instanceof FileList && file.length === 1,
-                    'Image is required'
-                ),
+                  .any()
+                  .refine(
+                      (file) => file instanceof FileList && file.length === 1,
+                      'Image is required'
+                  ),
     })

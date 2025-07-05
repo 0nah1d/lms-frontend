@@ -1,10 +1,10 @@
 import React from 'react'
 import logo from '../../assets/logo.png'
-import {Link, NavLink} from 'react-router-dom'
-import {useToken} from '../../context/tokenContext.jsx'
+import { Link, NavLink } from 'react-router-dom'
+import { useToken } from '../../context/tokenContext.jsx'
 
 export default function Navbar() {
-    const {token, logout} = useToken()
+    const { token, logout } = useToken()
 
     const navItems = (
         <>
@@ -40,7 +40,10 @@ export default function Navbar() {
 
                 {token?.role === 'admin' && (
                     <div>
-                        <Link to={'/dashboard'} className="font-semibold text-black">
+                        <Link
+                            to={'/dashboard'}
+                            className="font-semibold text-black"
+                        >
                             Admin Dashboard
                         </Link>
                     </div>
@@ -48,7 +51,9 @@ export default function Navbar() {
 
                 <div>
                     <div className="flex justify-between items-center gap-2 font-semibold">
-                        <span className="font-semibold text-black">{token?.username}</span>
+                        <span className="font-semibold text-black">
+                            {token?.username}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -74,8 +79,7 @@ export default function Navbar() {
                                     strokeLinejoin="round"
                                     strokeWidth="2"
                                     d="M4 6h16M4 12h8m-8 6h16"
-                                />
-                                {' '}
+                                />{' '}
                             </svg>
                         </div>
                         <ul
@@ -86,7 +90,7 @@ export default function Navbar() {
                         </ul>
                     </div>
                     <div className="flex items-center">
-                        <img className="w-20" src={logo ?? ''} alt="logo"/>
+                        <img className="w-20" src={logo ?? ''} alt="logo" />
                         <span className="text-xl font-bold ml-2">Library</span>
                     </div>
                 </div>

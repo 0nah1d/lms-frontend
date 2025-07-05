@@ -1,15 +1,13 @@
-import {createContext, useContext, useEffect, useState} from 'react'
-import {api} from '../utils/api.js'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { api } from '../utils/api.js'
 
 const TokenContext = createContext({
     token: null,
-    setToken: () => {
-    },
-    logout: () => {
-    },
+    setToken: () => {},
+    logout: () => {},
 })
 
-const TokenProvider = ({children}) => {
+const TokenProvider = ({ children }) => {
     const [token, setTokenState] = useState(null)
 
     useEffect(() => {
@@ -35,7 +33,7 @@ const TokenProvider = ({children}) => {
 
         const accessToken = tokenObj?.accessToken
 
-        localStorage.setItem('accessToken', JSON.stringify({tokenObj}))
+        localStorage.setItem('accessToken', JSON.stringify({ tokenObj }))
         api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
         setTokenState(tokenObj)
     }
@@ -47,7 +45,7 @@ const TokenProvider = ({children}) => {
     }
 
     return (
-        <TokenContext.Provider value={{token, setToken, logout}}>
+        <TokenContext.Provider value={{ token, setToken, logout }}>
             {children}
         </TokenContext.Provider>
     )

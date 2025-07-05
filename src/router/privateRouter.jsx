@@ -1,14 +1,10 @@
 import React from 'react'
-import {Navigate} from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
-export default function PrivateRouter({children}) {
+export default function PrivateRouter({ children }) {
     return (
         <>
-            <Navigate
-                to={'/login'}
-                state={{from: location}}
-                replace
-            />
+            <Navigate to={'/login'} state={{ from: location }} replace />
             {children}
         </>
     )
