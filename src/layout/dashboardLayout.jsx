@@ -1,6 +1,7 @@
 import React from 'react'
 import {FaAddressBook, FaBook, FaHome, FaUsers} from 'react-icons/fa'
 import {NavLink, Outlet} from 'react-router-dom'
+import {ToastContainer} from "react-toastify";
 
 export default function DashboardLayout() {
     return (
@@ -33,6 +34,7 @@ export default function DashboardLayout() {
             <div className="w-full pr-10">
                 <Outlet/>
             </div>
+            <ToastContainer/>
         </div>
     )
 }

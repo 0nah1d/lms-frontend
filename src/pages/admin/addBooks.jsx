@@ -1,43 +1,85 @@
-import React from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import { bookSchema } from '../../schema/book'
+import { imageToBase64, objectToArray } from '../../utils'
+import { api } from '../../utils/api'
+import { getCategoryList, getDepartmentList } from '../../utils/queary'
 
 export default function AddBooks() {
-    const handleAddBook = (e) => {
-        e.preventDefault()
-        const form = e.target
-        const formData = new FormData(form)
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+        setError,
+    } = useForm({
+        resolver: zodResolver(bookSchema),
+    })
 
-        // Get all values
-        const book = {
-            name: formData.get('name'),
-            author: formData.get('author'),
-            genre: formData.get('genre'),
-            category: formData.get('category'),
-            quantity: formData.get('quantity'),
-            link: formData.get('link'),
-            image: formData.get('image'),
-            details: formData.get('details'),
+    const [categoryList, setCategoryList] = useState([])
+    const [departmentList, setDepartmentList] = useState([])
+
+    useEffect(() => {
+        getCategoryList().then((res) => {
+            setCategoryList(res)
+        })
+    }, [])
+
+    useEffect(() => {
+        getDepartmentList().then((res) => {
+            setDepartmentList(res)
+        })
+    }, [])
+
+    const onSubmit = async (data) => {
+        try {
+            const base64Image = await imageToBase64(data.image[0])
+
+            const payload = {
+                ...data,
+                image: base64Image,
+            }
+
+            const res = await api.post('/book', payload)
+
+            toast.success(res?.data?.message)
+            reset()
+        } catch (error) {
+            if (error.response?.data) {
+                const formattedData = objectToArray(error.response.data)
+                formattedData.forEach((el) => {
+                    setError(el.name, {
+                        type: 'custom',
+                        message: el.message,
+                    })
+                })
+            }
         }
-
-        console.log(book)
-        // You can now send `book` to your backend
     }
 
     return (
-        <div className="max-w-2xl mx-auto bg-gray-100 p-8 rounded-lg shadow mt-10">
+        <div className="max-w-2xl mx-auto bg-gray-100 p-8 rounded-lg shadow mt-10 text-black">
             <h2 className="text-2xl font-semibold mb-6">Add a New Book</h2>
-            <form onSubmit={handleAddBook}>
-                {/* Name */}
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                encType="multipart/form-data"
+            >
                 <div className="mb-4">
-                    <label className="block mb-1 font-medium">Book Name*</label>
+                    <label className="block mb-1 font-medium">Title*</label>
                     <input
                         type="text"
-                        name="name"
-                        placeholder="Book name"
-                        className="w-full border rounded px-3 py-2 focus:outline-none"
-                        required
+                        {...register('title')}
+                        className="w-full border rounded px-3 py-2"
                     />
+                    {errors.title && (
+                        <p className="text-red-500 text-sm">
+                            {errors.title.message}
+                        </p>
+                    )}
                 </div>
-                {/* Author & Genre */}
+
                 <div className="flex gap-4 mb-4">
                     <div className="flex-1">
                         <label className="block mb-1 font-medium">
@@ -45,107 +87,130 @@ export default function AddBooks() {
                         </label>
                         <input
                             type="text"
-                            name="author"
-                            placeholder="Author"
-                            className="w-full border rounded px-3 py-2 focus:outline-none"
-                            required
+                            {...register('author')}
+                            className="w-full border rounded px-3 py-2"
                         />
+                        {errors.author && (
+                            <p className="text-red-500 text-sm">
+                                {errors.author.message}
+                            </p>
+                        )}
                     </div>
                     <div className="flex-1">
                         <label className="block mb-1 font-medium">Genre*</label>
                         <input
                             type="text"
-                            name="genre"
-                            placeholder="Genre"
-                            className="w-full border rounded px-3 py-2 focus:outline-none"
-                            required
+                            {...register('genre')}
+                            className="w-full border rounded px-3 py-2"
                         />
+                        {errors.genre && (
+                            <p className="text-red-500 text-sm">
+                                {errors.genre.message}
+                            </p>
+                        )}
                     </div>
                 </div>
-                {/* Category & Quantity */}
+
                 <div className="flex gap-4 mb-4">
                     <div className="flex-1">
                         <label className="block mb-1 font-medium">
-                            Category
+                            Category*
                         </label>
                         <select
-                            name="category"
-                            className="w-full border rounded px-3 py-2 focus:outline-none"
+                            {...register('category')}
+                            className="w-full border rounded px-3 py-2"
                             defaultValue=""
                         >
-                            <option value="" disabled>
-                                Select Category
-                            </option>
-                            <option value="CSE">CSE</option>
-                            <option value="BBA">BBA</option>
-                            <option value="Civil">Civil</option>
-                            <option value="English">English</option>
-                            <option value="Islamic Studies">
-                                Islamic Studies
-                            </option>
-                            <option value="LLB">LLB</option>
+                            <option value="">Select Category</option>
+                            {categoryList.map((cat) => (
+                                <option key={cat._id} value={cat._id}>
+                                    {cat.name}
+                                </option>
+                            ))}
                         </select>
+                        {errors.category && (
+                            <p className="text-red-500 text-sm">
+                                {errors.category.message}
+                            </p>
+                        )}
                     </div>
+
                     <div className="flex-1">
                         <label className="block mb-1 font-medium">
-                            Quantity*
+                            Department*
                         </label>
-                        <input
-                            type="number"
-                            name="quantity"
-                            placeholder="Quantity"
-                            min={1}
-                            className="w-full border rounded px-3 py-2 focus:outline-none"
-                            required
-                        />
+                        <select
+                            {...register('department')}
+                            className="w-full border rounded px-3 py-2"
+                            defaultValue=""
+                        >
+                            <option value="">Select Department</option>{' '}
+                            {departmentList.map((dept) => (
+                                <option key={dept._id} value={dept._id}>
+                                    {dept.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.department && (
+                            <p className="text-red-500 text-sm">
+                                {errors.department.message}
+                            </p>
+                        )}
                     </div>
                 </div>
-                {/* Link */}
+
                 <div className="mb-4">
                     <label className="block mb-1 font-medium">Book Link*</label>
                     <input
                         type="url"
-                        name="link"
-                        placeholder="Google Drive or other link"
-                        className="w-full border rounded px-3 py-2 focus:outline-none"
-                        required
+                        {...register('book_link')}
+                        className="w-full border rounded px-3 py-2"
                     />
+                    {errors.book_link && (
+                        <p className="text-red-500 text-sm">
+                            {errors.book_link.message}
+                        </p>
+                    )}
                 </div>
-                {/* Image */}
+
                 <div className="mb-4">
                     <label className="block mb-1 font-medium">
-                        Book Image*
+                        Upload Image*
                     </label>
                     <input
-                        type="url"
-                        name="image"
-                        placeholder="Image URL"
-                        className="w-full border rounded px-3 py-2 focus:outline-none"
-                        required
+                        type="file"
+                        accept="image/*"
+                        {...register('image')}
+                        className="w-full border rounded px-3 py-2"
                     />
+                    {errors.image && (
+                        <p className="text-red-500 text-sm">
+                            {errors.image.message}
+                        </p>
+                    )}
                 </div>
-                {/* Details */}
+
                 <div className="mb-6">
                     <label className="block mb-1 font-medium">
-                        Book Details*
+                        Description*
                     </label>
                     <textarea
-                        name="details"
-                        placeholder="Book Details"
-                        className="w-full border rounded px-3 py-2 focus:outline-none"
+                        {...register('description')}
+                        className="w-full border rounded px-3 py-2"
                         rows={4}
-                        required
                     ></textarea>
+                    {errors.description && (
+                        <p className="text-red-500 text-sm">
+                            {errors.description.message}
+                        </p>
+                    )}
                 </div>
-                {/* Submit */}
+
                 <button
                     type="submit"
-                    className="bg-yellow-800 hover:bg-yellow-700 text-white font-semibold px-6 py-2 rounded flex items-center gap-2"
+                    className="bg-yellow-800 hover:bg-yellow-700 text-white font-semibold px-6 py-2 rounded"
                 >
                     Add Book
-                    <span role="img" aria-label="book">
-                        📚
-                    </span>
                 </button>
             </form>
         </div>

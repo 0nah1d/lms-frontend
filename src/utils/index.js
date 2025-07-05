@@ -10,3 +10,11 @@ export const objectToArray = (obj) => {
     })
     return fieldsErrors
 }
+
+export const imageToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+    })
