@@ -62,7 +62,7 @@ export default function DepartmentFormModal({
                     ×
                 </button>
                 <h2 className="text-xl font-semibold mb-4">
-                    {initialData ? 'Edit Book' : 'Add Book'}
+                    {initialData ? 'Edit Department' : 'Add Department'}
                 </h2>
 
                 <form onSubmit={handleSubmit(handleFormSubmit)}>

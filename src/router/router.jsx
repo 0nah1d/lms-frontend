@@ -21,6 +21,7 @@ import Librarian from '../pages/common/librarian/librarian.jsx'
 import Registration from '../pages/auth/registration.jsx'
 import AdminBooks from '../pages/admin/book/adminBooks.jsx'
 import AdminDepartment from '../pages/admin/department/adminDepartment.jsx'
+import { getBookById } from '../utils/queary.js'
 
 export const router = createBrowserRouter([
     {
@@ -69,13 +70,10 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/book/:id',
-                element: (
-                    <PrivateRouter>
-                        <BookDetails></BookDetails>
-                    </PrivateRouter>
-                ),
-                loader: ({ params }) =>
-                    fetch(`http://localhost:5000/books/${params.id}`),
+                element: <BookDetails />,
+                loader: async ({ params }) => {
+                    return await getBookById(params.id)
+                },
             },
             {
                 path: '/about',

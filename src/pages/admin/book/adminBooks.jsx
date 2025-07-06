@@ -109,46 +109,63 @@ export default function AdminBooks() {
                     </tr>
                 </thead>
                 <tbody>
-                    {books?.results?.map((book, index) => (
-                        <tr key={index}>
-                            <td className="border px-4 py-2">
-                                <div className="flex items-center gap-4">
-                                    <img
-                                        height={60}
-                                        width={60}
-                                        src={book.image_url}
-                                        alt="book"
-                                    />
-                                    {book.title}
-                                </div>
-                            </td>
-                            <td className="border px-4 py-2">{book.author}</td>
-                            <td className="border px-4 py-2">{book.genre}</td>
-                            <td className="border px-4 py-2">
-                                {book?.department?.name}
-                            </td>
-                            <td className="border px-4 py-2">{book.stock}</td>
-                            <td className="border px-4 py-2">
-                                <div className="flex items-center gap-4 justify-center">
-                                    <button
-                                        className="text-sm px-3 py-1 bg-yellow-500 text-white rounded"
-                                        onClick={() => handleEdit(book)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="text-sm px-3 py-1 bg-red-600 text-white rounded"
-                                        onClick={() => {
-                                            setBookToDelete(book)
-                                            setConfirmOpen(true)
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                    {books?.results?.length > 0 ? (
+                        books.results.map((book, index) => (
+                            <tr key={index}>
+                                <td className="border px-4 py-2">
+                                    <div className="flex items-center gap-4">
+                                        <img
+                                            height={60}
+                                            width={60}
+                                            src={book.image_url}
+                                            alt="book"
+                                        />
+                                        {book.title}
+                                    </div>
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {book.author}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {book.genre}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {book?.department?.name}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {book.stock}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    <div className="flex items-center gap-4 justify-center">
+                                        <button
+                                            className="text-sm px-3 py-1 bg-yellow-500 text-white rounded"
+                                            onClick={() => handleEdit(book)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="text-sm px-3 py-1 bg-red-600 text-white rounded"
+                                            onClick={() => {
+                                                setBookToDelete(book)
+                                                setConfirmOpen(true)
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td
+                                colSpan="6"
+                                className="text-center py-6 text-gray-500"
+                            >
+                                No books found.
                             </td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
 

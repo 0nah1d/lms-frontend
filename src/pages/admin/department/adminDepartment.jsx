@@ -86,35 +86,48 @@ export default function AdminDepartment() {
                     </tr>
                 </thead>
                 <tbody>
-                    {departments?.map((department, index) => (
-                        <tr key={index}>
-                            <td className="border px-4 py-2">
-                                {department.name}
-                            </td>
-                            <td className="border px-4 py-2">
-                                {department.description}
-                            </td>
-                            <td className="border px-4 py-2">
-                                <div className="flex items-center gap-4 justify-center">
-                                    <button
-                                        className="text-sm px-3 py-1 bg-yellow-500 text-white rounded"
-                                        onClick={() => handleEdit(department)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="text-sm px-3 py-1 bg-red-600 text-white rounded"
-                                        onClick={() => {
-                                            setDeptToDelete(department)
-                                            setConfirmOpen(true)
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                    {departments?.length > 0 ? (
+                        departments.map((department, index) => (
+                            <tr key={index}>
+                                <td className="border px-4 py-2">
+                                    {department.name}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {department.description}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    <div className="flex items-center gap-4 justify-center">
+                                        <button
+                                            className="text-sm px-3 py-1 bg-yellow-500 text-white rounded"
+                                            onClick={() =>
+                                                handleEdit(department)
+                                            }
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="text-sm px-3 py-1 bg-red-600 text-white rounded"
+                                            onClick={() => {
+                                                setDeptToDelete(department)
+                                                setConfirmOpen(true)
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td
+                                colSpan="3"
+                                className="text-center py-6 text-gray-500"
+                            >
+                                No departments found.
                             </td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
 

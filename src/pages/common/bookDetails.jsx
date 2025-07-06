@@ -3,26 +3,42 @@ import { useLoaderData } from 'react-router-dom'
 
 export default function BookDetails() {
     const book = useLoaderData()
-
-    const { image, name, author, details, genre, link, quantity, _id } = book
+    const {
+        image_url,
+        title,
+        author,
+        description,
+        genre,
+        book_link,
+        stock,
+        _id,
+    } = book
 
     const [requestSent, setRequestSent] = useState(false)
 
-    const handleBorrowBook = () => {}
+    const handleBorrowBook = () => {
+        setRequestSent(true)
+    }
 
     return (
         <div className="card card-side bg-base-100 shadow-sm my-10 max-w-4xl mx-auto">
-            <figure className="w-full flex-1/3">
-                <img className="w-full" src={image} alt="Book" />
+            <figure className="w-full md:w-1/3">
+                <img className="w-full" src={image_url} alt={title} />
             </figure>
-            <div className="card-body flex-2/3">
-                <h2 className="card-title">{name}</h2>
-                <p>Author : {author}</p>
-                <p>Genre : {genre}</p>
-                <p>Quantity : {quantity}</p>
-                <p>{details}</p>
-                <div className="card-actions gap-5">
-                    {quantity === 0 ? (
+            <div className="card-body w-full md:w-2/3">
+                <h2 className="card-title">{title}</h2>
+                <p>
+                    <strong>Author:</strong> {author}
+                </p>
+                <p>
+                    <strong>Genre:</strong> {genre}
+                </p>
+                <p>
+                    <strong>Available Stock:</strong> {stock}
+                </p>
+                <p className="mt-2">{description}</p>
+                <div className="card-actions gap-5 mt-4">
+                    {stock === 0 ? (
                         <button className="btn btn-disabled">
                             Not Available
                         </button>
@@ -39,13 +55,16 @@ export default function BookDetails() {
                         </button>
                     )}
 
-                    <a
-                        href={link}
-                        target="_blank"
-                        className="btn btn-success text-white"
-                    >
-                        Download
-                    </a>
+                    {book_link && (
+                        <a
+                            href={book_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-success text-white"
+                        >
+                            Download
+                        </a>
+                    )}
                 </div>
             </div>
         </div>

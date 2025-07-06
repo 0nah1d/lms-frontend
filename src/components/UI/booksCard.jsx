@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 export default function BooksCard({ book }) {
-    const { image, name, genre, author, id } = book
+    const { image, name, genre, author, _id } = book
     return (
         <div className="card bg-base-100 shadow-sm">
             <figure className="px-10 pt-10">
@@ -13,7 +13,7 @@ export default function BooksCard({ book }) {
                 <p>Genre : {genre}</p>
                 <p>Author : {author}</p>
                 <div className="card-actions">
-                    <Link to={`/book/${id}`}>
+                    <Link to={`/book/${_id}`}>
                         <button className="btn btn-success text-white">
                             View Details
                         </button>
