@@ -45,7 +45,7 @@ export default function Cse() {
                     <span className="loading loading-bars loading-xl text-center col-span-full mx-auto mt-10"></span>
                 ) : books.length === 0 ? (
                     <p className="text-center col-span-full mt-10">
-                        No books found in CSE department.
+                        No books found.
                     </p>
                 ) : (
                     books.map((book) => (
