@@ -12,17 +12,17 @@ export default function Pagination({ page, totalPages, onPageChange }) {
     return (
         <div className="mt-4 flex justify-center gap-4">
             <button
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-black"
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 text-black cursor-pointer"
                 onClick={handlePrev}
                 disabled={page === 1}
             >
                 {'<'}
             </button>
-            <span className="text-lg font-semibold">
+            <span className="text-base font-semibold">
                 Page {page} of {totalPages}
             </span>
             <button
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-black"
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 text-black cursor-pointer"
                 onClick={handleNext}
                 disabled={page === totalPages}
             >
