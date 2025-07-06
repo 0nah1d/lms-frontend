@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-
 import { toast } from 'react-toastify'
 import { api } from '../../../utils/api.js'
 import DepartmentFormModal from './elements/departmentFormModal.jsx'
 import DeleteConfirmDialog from '../../../components/UI/deleteConfirmDialog.jsx'
+import { getDepartments } from '../../../utils/queary.js'
 
 export default function AdminDepartment() {
     const [departments, setDepartments] = useState([])
@@ -12,13 +12,17 @@ export default function AdminDepartment() {
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [deptToDelete, setDeptToDelete] = useState(null)
 
-    const fetchDept = async () => {
-        const res = await api.get('/department')
-        setDepartments(res.data || [])
+    const loadDepartments = async () => {
+        try {
+            const data = await getDepartments()
+            setDepartments(data)
+        } catch {
+            toast.error('Failed to fetch departments')
+        }
     }
 
     useEffect(() => {
-        void fetchDept()
+        void loadDepartments()
     }, [])
 
     const handleAddClick = () => {
@@ -26,8 +30,8 @@ export default function AdminDepartment() {
         setModalOpen(true)
     }
 
-    const handleEdit = (book) => {
-        setSelectDept(book)
+    const handleEdit = (department) => {
+        setSelectDept(department)
         setModalOpen(true)
     }
 
@@ -35,7 +39,7 @@ export default function AdminDepartment() {
         try {
             const res = await api.delete(`/department/${deptToDelete._id}`)
             toast.success(res.data.message)
-            await fetchDept()
+            await loadDepartments()
         } catch {
             toast.error('Failed to delete')
         } finally {
@@ -44,17 +48,21 @@ export default function AdminDepartment() {
     }
 
     const handleSubmitBook = async (payload) => {
-        if (selectDept) {
-            const res = await api.patch(
-                `/department/${selectDept._id}`,
-                payload
-            )
-            toast.success(res.data.message)
-        } else {
-            const res = await api.post('/department', payload)
-            toast.success(res.data.message)
+        try {
+            if (selectDept) {
+                const res = await api.patch(
+                    `/department/${selectDept._id}`,
+                    payload
+                )
+                toast.success(res.data.message)
+            } else {
+                const res = await api.post('/department', payload)
+                toast.success(res.data.message)
+            }
+            await loadDepartments()
+        } catch {
+            toast.error('Failed to save department')
         }
-        await fetchDept()
     }
 
     return (
@@ -87,11 +95,7 @@ export default function AdminDepartment() {
                                 {department.description}
                             </td>
                             <td className="border px-4 py-2">
-                                <div
-                                    className={
-                                        'flex items-center gap-4 justify-center'
-                                    }
-                                >
+                                <div className="flex items-center gap-4 justify-center">
                                     <button
                                         className="text-sm px-3 py-1 bg-yellow-500 text-white rounded"
                                         onClick={() => handleEdit(department)}
