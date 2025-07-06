@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { api } from '../utils/api.js'
+import { toast } from 'react-toastify'
 
 const TokenContext = createContext({
     token: null,
@@ -11,21 +12,31 @@ const TokenProvider = ({ children }) => {
     const [token, setTokenState] = useState(null)
 
     useEffect(() => {
-        const stored = localStorage.getItem('accessToken')
-        try {
-            const tokenObj = JSON.parse(stored)
-            const accessToken = tokenObj?.tokenObj?.accessToken
+        const validateStoredToken = async () => {
+            const stored = localStorage.getItem('accessToken')
 
-            if (accessToken) {
+            try {
+                const tokenObj = JSON.parse(stored)
+                const accessToken = tokenObj?.tokenObj?.accessToken
+
+                if (!accessToken) {
+                    setTokenState(null)
+                    return
+                }
+
                 api.defaults.headers.common['Authorization'] =
                     `Bearer ${accessToken}`
+
+                await api.get('/check-token')
+
                 setTokenState(tokenObj?.tokenObj)
-            } else {
-                setTokenState(null)
+            } catch {
+                toast.warning('Your session is expired. Please re login')
+                logout()
             }
-        } catch {
-            setTokenState(null)
         }
+
+        void validateStoredToken()
     }, [])
 
     const setToken = (tokenObj) => {
@@ -40,7 +51,7 @@ const TokenProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('accessToken')
-        api.defaults.headers.common['Authorization'] = ''
+        delete api.defaults.headers.common['Authorization']
         setTokenState(null)
     }
 
