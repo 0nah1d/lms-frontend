@@ -13,7 +13,6 @@ import BookDetails from '../pages/common/bookDetails.jsx'
 import Information from '../pages/common/information.jsx'
 import Contact from '../pages/common/contact.jsx'
 import Login from '../pages/auth/login.jsx'
-import PrivateRouter from './privateRouter.jsx'
 import DashboardLayout from '../layout/dashboardLayout.jsx'
 import Dashboard from '../pages/admin/dashboard.jsx'
 import AllUser from '../pages/admin/allUser.jsx'
@@ -23,6 +22,9 @@ import AdminBooks from '../pages/admin/book/adminBooks.jsx'
 import AdminDepartment from '../pages/admin/department/adminDepartment.jsx'
 import { getBookById } from '../utils/queary.js'
 import AdminIssue from '../pages/admin/issue/adminIssue.jsx'
+import GuestRoute from './guestRoute.jsx'
+import AdminRoute from './adminRoute.jsx'
+import NonAdminRoute from './nonAdminRoute.jsx'
 
 export const router = createBrowserRouter([
     {
@@ -31,11 +33,19 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: '/login',
-                element: <Login />,
+                element: (
+                    <GuestRoute>
+                        <Login />
+                    </GuestRoute>
+                ),
             },
             {
                 path: '/register',
-                element: <Registration />,
+                element: (
+                    <GuestRoute>
+                        <Registration />{' '}
+                    </GuestRoute>
+                ),
             },
             {
                 path: '/',
@@ -71,7 +81,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/book/:id',
-                element: <BookDetails />,
+                element: (
+                    <NonAdminRoute>
+                        <BookDetails />
+                    </NonAdminRoute>
+                ),
                 loader: async ({ params }) => {
                     return await getBookById(params.id)
                 },
@@ -97,9 +111,9 @@ export const router = createBrowserRouter([
     {
         path: '/dashboard',
         element: (
-            <PrivateRouter>
+            <AdminRoute>
                 <DashboardLayout />
-            </PrivateRouter>
+            </AdminRoute>
         ),
         children: [
             {
