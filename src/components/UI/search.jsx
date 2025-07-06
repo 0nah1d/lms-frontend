@@ -21,7 +21,7 @@ export default function Search({ search, setSearch }) {
                 <input
                     type="search"
                     required
-                    placeholder="Search Book"
+                    placeholder="Search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="outline-none"

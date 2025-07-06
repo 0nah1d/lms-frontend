@@ -54,7 +54,7 @@ const Registration = () => {
                             onSubmit={handleSubmit(onSubmit)}
                             className="card-body"
                         >
-                            <label className="label">Name</label>
+                            <label className="label">Username</label>
                             <input
                                 type="text"
                                 {...register('username')}

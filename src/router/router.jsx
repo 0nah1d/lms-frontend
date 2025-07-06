@@ -22,6 +22,7 @@ import Registration from '../pages/auth/registration.jsx'
 import AdminBooks from '../pages/admin/book/adminBooks.jsx'
 import AdminDepartment from '../pages/admin/department/adminDepartment.jsx'
 import { getBookById } from '../utils/queary.js'
+import AdminIssue from '../pages/admin/issue/adminIssue.jsx'
 
 export const router = createBrowserRouter([
     {
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
             {
                 path: '/dashboard/department',
                 element: <AdminDepartment />,
+            },
+            {
+                path: '/dashboard/issue',
+                element: <AdminIssue />,
             },
         ],
     },
