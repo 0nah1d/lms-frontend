@@ -1,21 +1,31 @@
 import { formatDistanceToNow } from 'date-fns'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { LuCircleUserRound, LuTrash2 } from 'react-icons/lu'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+
 import DeleteConfirmDialog from '../../components/UI/deleteConfirmDialog.jsx'
 import Pagination from '../../components/UI/pagination.jsx'
+import { useToken } from '../../context/tokenContext.jsx'
 import { api } from '../../utils/api.js'
 import { handleApiError } from '../../utils/handleError.js'
 
 const Comments = ({ bookId }) => {
-    const [comments, setComments] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [page, setPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
+    const navigate = useNavigate()
+    const { token } = useToken()
 
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const [deleteCommentId, setDeleteCommentId] = useState(null)
+    const [state, setState] = useState({
+        comments: [],
+        loading: false,
+        page: 1,
+        totalPages: 1,
+    })
+
+    const [deleteDialog, setDeleteDialog] = useState({
+        open: false,
+        commentId: null,
+    })
 
     const {
         register,
@@ -24,60 +34,66 @@ const Comments = ({ bookId }) => {
         formState: { errors },
     } = useForm()
 
-    const fetchComments = async (pageNumber = 1) => {
-        try {
-            setLoading(true)
-            const res = await api.get(`/comment/${bookId}?page=${pageNumber}`)
-            setComments(res.data?.results ?? [])
-            setPage(res.data?.page ?? 1)
-            setTotalPages(res.data?.total_page ?? 1)
-        } catch (error) {
-            handleApiError(error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    const fetchComments = useCallback(
+        async (pageNumber = 1) => {
+            try {
+                setState((prev) => ({ ...prev, loading: true }))
+                const res = await api.get(
+                    `/comment/${bookId}?page=${pageNumber}`
+                )
+                setState({
+                    comments: res.data?.results ?? [],
+                    page: res.data?.page ?? 1,
+                    totalPages: res.data?.total_page ?? 1,
+                    loading: false,
+                })
+            } catch (error) {
+                setState((prev) => ({ ...prev, loading: false }))
+                handleApiError(error)
+            }
+        },
+        [bookId]
+    )
 
     useEffect(() => {
-        if (bookId) fetchComments(page)
-    }, [bookId, page])
+        if (bookId) fetchComments(state.page)
+    }, [bookId, state.page, fetchComments])
 
     const onSubmit = async (data) => {
+        if (!token) return navigate('/login')
+
         try {
-            const response = await api.post(`/comment/${bookId}`, data)
+            const res = await api.post(`/comment/${bookId}`, data)
             reset()
-            fetchComments(page)
-            toast.success(response.message || 'Comment added successfully')
+            fetchComments(state.page)
+            toast.success(res.message || 'Comment added successfully')
         } catch (error) {
             handleApiError(error)
         }
     }
 
-    const handleDelete = async (id) => {
+    const handleDelete = async () => {
         try {
-            await api.delete(`/comment/${id}`)
-            fetchComments(page)
-            toast.success('Comment deleted successfully')
+            const res = await api.delete(`/comment/${deleteDialog.commentId}`)
+            fetchComments(state.page)
+            toast.success(res.message || 'Comment deleted successfully')
         } catch (error) {
             handleApiError(error)
         } finally {
-            setDeleteDialogOpen(false)
-            setDeleteCommentId(null)
+            setDeleteDialog({ open: false, commentId: null })
         }
     }
 
-    const onPageChange = (newPage) => {
-        setPage(newPage)
+    const handlePageChange = (newPage) => {
+        setState((prev) => ({ ...prev, page: newPage }))
     }
 
-    const confirmDelete = (id) => {
-        setDeleteCommentId(id)
-        setDeleteDialogOpen(true)
+    const openDeleteDialog = (id) => {
+        setDeleteDialog({ open: true, commentId: id })
     }
 
-    const cancelDelete = () => {
-        setDeleteDialogOpen(false)
-        setDeleteCommentId(null)
+    const closeDeleteDialog = () => {
+        setDeleteDialog({ open: false, commentId: null })
     }
 
     return (
@@ -87,12 +103,12 @@ const Comments = ({ bookId }) => {
             </h1>
 
             <div className="space-y-6 mb-6">
-                {loading ? (
+                {state.loading ? (
                     <p className="text-gray-500 text-center">
                         Loading comments...
                     </p>
-                ) : comments?.length > 0 ? (
-                    comments.map((c) => (
+                ) : state.comments.length > 0 ? (
+                    state.comments.map((c) => (
                         <div
                             key={c._id}
                             className="bg-gray-50 border border-gray-200 p-5 rounded-2xl shadow-sm flex gap-1"
@@ -115,15 +131,20 @@ const Comments = ({ bookId }) => {
                                 <p className="text-gray-700 whitespace-pre-line">
                                     {c.text}
                                 </p>
-                                <div className="flex justify-end">
-                                    <button
-                                        onClick={() => confirmDelete(c._id)}
-                                        className="text-red-500 hover:text-red-600 cursor-pointer"
-                                        aria-label="Delete comment"
-                                    >
-                                        <LuTrash2 size={20} />
-                                    </button>
-                                </div>
+
+                                {token?.id === c.user?._id && (
+                                    <div className="flex justify-end">
+                                        <button
+                                            onClick={() =>
+                                                openDeleteDialog(c._id)
+                                            }
+                                            className="text-red-500 hover:text-red-600 cursor-pointer"
+                                            aria-label="Delete comment"
+                                        >
+                                            <LuTrash2 size={20} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))
@@ -134,11 +155,11 @@ const Comments = ({ bookId }) => {
                 )}
             </div>
 
-            {totalPages > 1 && (
+            {!state.loading && state.totalPages > 1 && (
                 <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
+                    page={state.page}
+                    totalPages={state.totalPages}
+                    onPageChange={handlePageChange}
                 />
             )}
 
@@ -154,11 +175,11 @@ const Comments = ({ bookId }) => {
                         required: 'Comment is required',
                         minLength: {
                             value: 5,
-                            message: 'Comment must be at least 5 characters',
+                            message: 'Minimum 5 characters',
                         },
                         maxLength: {
                             value: 1000,
-                            message: 'Comment cannot exceed 1000 characters',
+                            message: 'Maximum 1000 characters',
                         },
                     })}
                     className={`w-full p-4 h-32 border rounded-xl resize-none focus:outline-none focus:ring-2 ${
@@ -184,9 +205,9 @@ const Comments = ({ bookId }) => {
             </form>
 
             <DeleteConfirmDialog
-                isOpen={deleteDialogOpen}
-                onClose={cancelDelete}
-                onConfirm={() => handleDelete(deleteCommentId)}
+                isOpen={deleteDialog.open}
+                onClose={closeDeleteDialog}
+                onConfirm={handleDelete}
                 message="Are you sure you want to delete this comment?"
             />
         </div>
