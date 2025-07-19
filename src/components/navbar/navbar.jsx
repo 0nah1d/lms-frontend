@@ -1,6 +1,7 @@
 import React from 'react'
-import logo from '../../assets/logo.png'
+import { LuHeart } from 'react-icons/lu'
 import { Link, NavLink } from 'react-router-dom'
+import logo from '../../assets/logo.png'
 import { useToken } from '../../context/tokenContext.jsx'
 
 export default function Navbar() {
@@ -24,7 +25,7 @@ export default function Navbar() {
     )
 
     return (
-        <div>
+        <div className="sticky top-0 z-50">
             <div className="flex justify-between items-center bg-gray-100 px-3 py-1">
                 <div className="flex items-center list-none font-semibold gap-3 text-black">
                     <li>
@@ -50,10 +51,21 @@ export default function Navbar() {
                 )}
 
                 <div>
-                    <div className="flex justify-between items-center gap-2 font-semibold">
+                    <div className="flex justify-between items-center gap-4 font-semibold">
                         <span className="font-semibold text-black">
                             {token?.username}
                         </span>
+                        {token?.role === 'student' && (
+                            <Link to={'/wishlist'}>
+                                <button className="flex items-center gap-2 cursor-pointer btn ">
+                                    <LuHeart
+                                        size={20}
+                                        className="text-red-500"
+                                    />
+                                    <span>My Wishlist</span>
+                                </button>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

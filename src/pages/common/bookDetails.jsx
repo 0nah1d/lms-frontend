@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { LuHeart, LuHeartCrack } from 'react-icons/lu'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useToken } from '../../context/tokenContext.jsx'
@@ -25,8 +26,10 @@ export default function BookDetails() {
         book_link,
     } = book
 
-    const [existingIssueStatus, setExistingIssueStatus] = useState(null) // null | "pending" | "approved"
+    const [existingIssueStatus, setExistingIssueStatus] = useState(null)
     const [checking, setChecking] = useState(true)
+    const [inWishlist, setInWishlist] = useState(false)
+    const [wishlistChecking, setWishlistChecking] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const {
@@ -44,16 +47,29 @@ export default function BookDetails() {
     })
 
     useEffect(() => {
-        const checkIssued = async () => {
-            if (!token) {
-                setChecking(false)
-                return
-            }
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+    
+        return () => {
+            document.body.style.overflow = ''
+        }
+    }, [isModalOpen])
 
+    useEffect(() => {
+        if (!token) {
+            setChecking(false)
+            setWishlistChecking(false)
+            return
+        }
+
+        const checkIssued = async () => {
             try {
                 const res = await api.get(`/issue/book/${_id}/check`)
                 if (res.data.alreadyIssued) {
-                    setExistingIssueStatus(res.data.status || 'pending') // fallback to pending if no status
+                    setExistingIssueStatus(res.data.status || 'pending')
                 } else {
                     setExistingIssueStatus(null)
                 }
@@ -67,7 +83,19 @@ export default function BookDetails() {
             }
         }
 
+        const checkWishlist = async () => {
+            try {
+                const res = await api.get(`/wishlist/${_id}/check`)
+                setInWishlist(res.data?.inWishlist || false)
+            } catch {
+                toast.error('Failed to check wishlist status')
+            } finally {
+                setWishlistChecking(false)
+            }
+        }
+
         void checkIssued()
+        void checkWishlist()
     }, [_id, token, logout])
 
     const handleOpenModal = () => {
@@ -78,6 +106,23 @@ export default function BookDetails() {
         setIsModalOpen(true)
     }
 
+    const handleAddToWishlist = async () => {
+        if (!token) {
+            navigate('/login')
+            return
+        }
+
+        try {
+            await api.post('/wishlist', { book: _id })
+            setInWishlist(true)
+            toast.success('Book added to wishlist')
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.message || 'Failed to add to wishlist'
+            )
+        }
+    }
+
     const onSubmit = async (data) => {
         try {
             const res = await api.post('/issue', {
@@ -86,7 +131,7 @@ export default function BookDetails() {
                 return_date: data.return_date || null,
             })
             toast.success(res.data.message)
-            setExistingIssueStatus('pending') // After request, status is pending
+            setExistingIssueStatus('pending')
             setIsModalOpen(false)
             reset()
         } catch (error) {
@@ -119,7 +164,8 @@ export default function BookDetails() {
                     </p>
                     <p className="mt-2">{description}</p>
 
-                    <div className="card-actions gap-5 mt-4">
+                    <div className="card-actions gap-4 mt-4 flex-wrap">
+                        {/* Borrow Button */}
                         {checking ? (
                             <button className="btn btn-disabled">
                                 Checking...
@@ -145,6 +191,25 @@ export default function BookDetails() {
                             </button>
                         )}
 
+                        {/* Wishlist Button */}
+                        {wishlistChecking ? (
+                            <button className="btn btn-disabled flex gap-2 items-center">
+                                <LuHeart /> Checking...
+                            </button>
+                        ) : inWishlist ? (
+                            <button className="btn btn-disabled flex gap-2 items-center">
+                                <LuHeartCrack /> In Wishlist
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleAddToWishlist}
+                                className="btn btn-outline flex gap-2 items-center"
+                            >
+                                <LuHeart /> Wishlist
+                            </button>
+                        )}
+
+                        {/* Download Button */}
                         {book_link && (
                             <a
                                 href={book_link}
@@ -159,9 +224,12 @@ export default function BookDetails() {
                 </div>
             </div>
 
+            {/* Comments */}
             <Comments bookId={_id} />
+
+            {/* Borrow Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="bg-white text-black p-6 rounded-lg max-w-sm w-full shadow-lg"
