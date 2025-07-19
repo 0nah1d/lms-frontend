@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { api } from '../../utils/api.js'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useLoaderData, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { useToken } from '../../context/tokenContext.jsx'
 import { issueFormSchema } from '../../schema/issue.js'
+import { api } from '../../utils/api.js'
 import { objectToArray } from '../../utils/index.js'
-import { toast } from 'react-toastify'
+import Comments from './comments.jsx'
 
 export default function BookDetails() {
     const book = useLoaderData()
@@ -59,7 +60,7 @@ export default function BookDetails() {
             } catch (err) {
                 toast.error(
                     err.response?.data?.message ||
-                    'Failed to check issue status',
+                        'Failed to check issue status'
                 )
             } finally {
                 setChecking(false)
@@ -100,62 +101,65 @@ export default function BookDetails() {
     }
 
     return (
-        <div className="card card-side bg-base-100 shadow-sm my-10 max-w-4xl mx-auto">
-            <figure className="w-full md:w-1/3">
-                <img className="w-full" src={image_url} alt={title} />
-            </figure>
-            <div className="card-body w-full md:w-2/3">
-                <h2 className="card-title">{title}</h2>
-                <p>
-                    <strong>Author:</strong> {author}
-                </p>
-                <p>
-                    <strong>Genre:</strong> {genre}
-                </p>
-                <p>
-                    <strong>Available Stock:</strong> {stock}
-                </p>
-                <p className="mt-2">{description}</p>
+        <>
+            <div className="card card-side bg-base-100 shadow-sm my-10 max-w-4xl mx-auto">
+                <figure className="w-full md:w-1/3">
+                    <img className="w-full" src={image_url} alt={title} />
+                </figure>
+                <div className="card-body w-full md:w-2/3">
+                    <h2 className="card-title">{title}</h2>
+                    <p>
+                        <strong>Author:</strong> {author}
+                    </p>
+                    <p>
+                        <strong>Genre:</strong> {genre}
+                    </p>
+                    <p>
+                        <strong>Available Stock:</strong> {stock}
+                    </p>
+                    <p className="mt-2">{description}</p>
 
-                <div className="card-actions gap-5 mt-4">
-                    {checking ? (
-                        <button className="btn btn-disabled">
-                            Checking...
-                        </button>
-                    ) : stock === 0 ? (
-                        <button className="btn btn-disabled">
-                            Not Available
-                        </button>
-                    ) : existingIssueStatus === 'approved' ? (
-                        <button className="btn btn-success btn-disabled">
-                            Approved
-                        </button>
-                    ) : existingIssueStatus ? (
-                        <button className="btn btn-info btn-disabled">
-                            Request Sent
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleOpenModal}
-                            className="btn btn-success text-white"
-                        >
-                            Add to Borrow
-                        </button>
-                    )}
+                    <div className="card-actions gap-5 mt-4">
+                        {checking ? (
+                            <button className="btn btn-disabled">
+                                Checking...
+                            </button>
+                        ) : stock === 0 ? (
+                            <button className="btn btn-disabled">
+                                Not Available
+                            </button>
+                        ) : existingIssueStatus === 'approved' ? (
+                            <button className="btn btn-success btn-disabled">
+                                Approved
+                            </button>
+                        ) : existingIssueStatus ? (
+                            <button className="btn btn-info btn-disabled">
+                                Request Sent
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleOpenModal}
+                                className="btn btn-success text-white"
+                            >
+                                Add to Borrow
+                            </button>
+                        )}
 
-                    {book_link && (
-                        <a
-                            href={book_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-success text-white"
-                        >
-                            Download
-                        </a>
-                    )}
+                        {book_link && (
+                            <a
+                                href={book_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-success text-white"
+                            >
+                                Download
+                            </a>
+                        )}
+                    </div>
                 </div>
             </div>
 
+            <Comments bookId={_id} />
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <form
@@ -241,6 +245,6 @@ export default function BookDetails() {
                     </form>
                 </div>
             )}
-        </div>
+        </>
     )
 }

@@ -12,13 +12,7 @@ export const registrationSchema = z
             .min(1, 'Email is required')
             .email('Invalid email address'),
 
-        password: z
-            .string()
-            .min(6, 'Password must be at least 6 characters')
-            .regex(
-                /^(?=.*[A-Z])(?=.*\d).{6,}$/,
-                'Password must contain at least one uppercase letter and one number'
-            ),
+        password: z.string().min(8, 'Password must be at least 8 characters'),
 
         confirm_password: z.string(),
     })
