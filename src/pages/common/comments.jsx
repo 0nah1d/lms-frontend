@@ -75,8 +75,23 @@ const Comments = ({ bookId }) => {
     const handleDelete = async () => {
         try {
             const res = await api.delete(`/comment/${deleteDialog.commentId}`)
-            fetchComments(state.page)
             toast.success(res.message || 'Comment deleted successfully')
+
+            const resComments = await api.get(
+                `/comment/${bookId}?page=${state.page}`
+            )
+            const comments = resComments.data?.results ?? []
+
+            if (comments.length === 0 && state.page > 1) {
+                setState((prev) => ({ ...prev, page: prev.page - 1 }))
+            } else {
+                setState((prev) => ({
+                    ...prev,
+                    comments,
+                    totalPages: resComments.data?.total_page ?? prev.totalPages,
+                    loading: false,
+                }))
+            }
         } catch (error) {
             handleApiError(error)
         } finally {
